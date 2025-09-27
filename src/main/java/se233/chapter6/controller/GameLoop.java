@@ -12,18 +12,20 @@ import se233.chapter6.model.Snake;
 import se233.chapter6.view.GameStage;
 
 public class GameLoop implements Runnable {
+    private Stage stage;
     private GameStage gameStage;
     private Snake snake;
     private Food food;
     private float interval = 1000.0f / 10;
     private boolean running;
     private boolean re = true;
-    public GameLoop(GameStage gameStage, Snake snake, Food food) {
+
+    public GameLoop(GameStage gameStage, Snake snake, Food food, Stage stage) {
         this.snake = snake;
         this.gameStage = gameStage;
         this.food = food;
+        this.stage = stage;
         running = true;
-
     }
 
     private void keyProcess() {
@@ -72,19 +74,14 @@ public class GameLoop implements Runnable {
     }
 
     private void update(Snake s){
-            Platform.runLater(() -> {
-                Alert a = new Alert(Alert.AlertType.CONFIRMATION);
-                a.setTitle("Game Over");
-                a.setHeaderText("You lost! Your final score was: " + s.getScore());
-
-                a.showAndWait();
-                if (a.getResult() == ButtonType.OK) {
-                    Stage currentStage = (Stage) gameStage.getScene().getWindow();
-                    Launcher.reset(currentStage);
-                }
-            });
-
-
-
+        Platform.runLater(() -> {
+            Alert a = new Alert(Alert.AlertType.CONFIRMATION);
+            a.setTitle("Game Over");
+            a.setHeaderText("You lost! Your final score was: " + s.getScore());
+            a.showAndWait();
+            if (a.getResult() == ButtonType.OK) {
+                Launcher.reset(this.stage);
+            }
+        });
     }
 }

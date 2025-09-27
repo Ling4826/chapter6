@@ -2,6 +2,7 @@ package se233.chapter6;
 
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
+import javafx.stage.Stage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +30,8 @@ public class GameLoopTest {
         gameStage = new GameStage();
         snake = new Snake(new Point2D(0, 0));
         food = new Food(new Point2D(0, 1));
-        gameLoop = new GameLoop(gameStage, snake, food);
+        Stage stage = new Stage();
+        gameLoop = new GameLoop(gameStage, snake, food, stage);
     }
 
 
@@ -72,7 +74,9 @@ public class GameLoopTest {
         GameStage mockGameStage = Mockito.mock(GameStage.class);
         Snake mockSnake = Mockito.mock(Snake.class);
         Food mockFood = Mockito.mock(Food.class);
-        GameLoop localGameLoop = new GameLoop(mockGameStage, mockSnake, mockFood);
+        Stage mockStage = Mockito.mock(Stage.class);
+
+        GameLoop localGameLoop = new GameLoop(mockGameStage, mockSnake, mockFood, mockStage);
 
         ReflectionHelper.invokeMethod(localGameLoop, "redraw", new Class<?>[0]);
         ReflectionHelper.invokeMethod(localGameLoop, "redraw", new Class<?>[0]);

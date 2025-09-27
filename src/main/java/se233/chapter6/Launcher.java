@@ -10,17 +10,21 @@ import se233.chapter6.model.Snake;
 import se233.chapter6.view.GameStage;
 
 public class Launcher extends Application {
-    public static void main(String[] args) {
-        launch(args);
-    }
-    static GameStage gameStage = new GameStage();
-    static Snake snake = new Snake(new Point2D(gameStage.WIDTH / 2, gameStage.HEIGHT / 2));
-    static Food food = new Food();
-    static GameLoop gameLoop = new GameLoop(gameStage, snake, food);
-    static Scene scene = new Scene(gameStage, gameStage.WIDTH * gameStage.TILE_SIZE, gameStage.HEIGHT * gameStage.TILE_SIZE);
+
+    // เพิ่ม stage เป็น static field
+    private static Stage primaryStage;
 
     @Override
     public void start(Stage stage) {
+        primaryStage = stage; // เก็บ stage ไว้ใน static field
+
+        GameStage gameStage = new GameStage();
+        Snake snake = new Snake(new Point2D(GameStage.WIDTH / 2, GameStage.HEIGHT / 2));
+        Food food = new Food();
+        // ส่ง primaryStage เข้าไปใน GameLoop ด้วย
+        GameLoop gameLoop = new GameLoop(gameStage, snake, food, primaryStage);
+
+        Scene scene = new Scene(gameStage, GameStage.WIDTH * GameStage.TILE_SIZE, GameStage.HEIGHT * GameStage.TILE_SIZE);
         scene.setOnKeyPressed(event -> gameStage.setKey(event.getCode()));
         scene.setOnKeyReleased(event -> gameStage.setKey(null));
 
@@ -31,16 +35,25 @@ public class Launcher extends Application {
         (new Thread(gameLoop)).start();
     }
 
-    public static void reset(Stage stage)
-    {
-        snake = new Snake(new Point2D(gameStage.WIDTH / 2, gameStage.HEIGHT / 2));
-        food = new Food();
-        gameLoop = new GameLoop(gameStage, snake, food);
+    public static void reset(Stage stage) {
+        // สร้างทุกอย่างขึ้นมาใหม่หมด
+        GameStage newGameStage = new GameStage();
+        Snake newSnake = new Snake(new Point2D(GameStage.WIDTH / 2, GameStage.HEIGHT / 2));
+        Food newFood = new Food();
+        GameLoop newGameLoop = new GameLoop(newGameStage, newSnake, newFood, stage);
 
-        stage.setScene(scene);
-        (new Thread(gameLoop)).start();
-        stage.show();
+        Scene newScene = new Scene(newGameStage, GameStage.WIDTH * GameStage.TILE_SIZE, GameStage.HEIGHT * GameStage.TILE_SIZE);
+        newScene.setOnKeyPressed(event -> newGameStage.setKey(event.getCode()));
+        newScene.setOnKeyReleased(event -> newGameStage.setKey(null));
 
+        // สั่งให้ stage ใช้ scene ใหม่
+        stage.setScene(newScene);
+        (new Thread(newGameLoop)).start();
     }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
 
 }
